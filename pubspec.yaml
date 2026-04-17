@@ -66,6 +66,7 @@ flutter:
   - assets/images/children.png
   - assets/images/youths.png
   - assets/images/parents.png
+  - assets/images/check.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

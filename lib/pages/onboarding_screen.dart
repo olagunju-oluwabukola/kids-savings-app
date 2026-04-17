@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'guess_screen.dart';
+import 'package:hsbc/pages/guess_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
