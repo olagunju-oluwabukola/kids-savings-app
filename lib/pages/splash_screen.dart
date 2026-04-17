@@ -17,18 +17,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Timer(Duration(seconds: 20), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => OnboardingScreen(
-            imagePath: "assets/images/onboarding1.png",
-            title: "Learn about money",
-            description:
-                "Let's get excited about money and learn together with fun games and exercises",
-            buttonText: "Next",
-            showSkip: true,
-            onNext: () {}, // we'll fill this in next
-            onSkip: () {},
-          ),
-        ),
+        MaterialPageRoute(builder: (context) => OnboardingScreen()),
       );
     });
   }
