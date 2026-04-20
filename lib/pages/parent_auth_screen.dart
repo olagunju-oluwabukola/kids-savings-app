@@ -7,9 +7,8 @@ class ParentAuthScreen extends StatefulWidget {
   State<ParentAuthScreen> createState() => _ParentAuthScreenState();
 }
 
-class _ParentAuthScreenState extends State<ParentAuthScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _ParentAuthScreenState extends State<ParentAuthScreen> {
+  bool _isLogin = true;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
@@ -19,14 +18,7 @@ class _ParentAuthScreenState extends State<ParentAuthScreen>
   bool _obscureConfirm = true;
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
   void dispose() {
-    _tabController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _nameController.dispose();
@@ -78,14 +70,14 @@ class _ParentAuthScreenState extends State<ParentAuthScreen>
                     // TODO: navigate to parent home screen
                   },
                   style: ElevatedButton.styleFrom(
-                    // backgroundColor: const Color(0xFFDB0011),
+                    backgroundColor: const Color(0xFFDB0011),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                   child: const Text(
-                    "Continue",
+                    "Start Using the App",
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
@@ -153,6 +145,68 @@ class _ParentAuthScreenState extends State<ParentAuthScreen>
     );
   }
 
+  Widget _buildToggle() {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5F5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _isLogin = true),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: _isLogin
+                      ? const Color(0xFFDB0011)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Login",
+                  style: TextStyle(
+                    color: _isLogin ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _isLogin = false),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: !_isLogin
+                      ? const Color(0xFFDB0011)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Register",
+                  style: TextStyle(
+                    color: !_isLogin ? Colors.white : Colors.grey,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,206 +244,161 @@ class _ParentAuthScreenState extends State<ParentAuthScreen>
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
               const SizedBox(height: 24),
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: const Color(0xFFDB0011),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "Login"),
-                    Tab(text: "Register"),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // --- LOGIN TAB ---
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTextField(
-                            controller: _emailController,
-                            label: "Email",
-                            hint: "Enter your email",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          _buildTextField(
-                            controller: _passwordController,
-                            label: "Password",
-                            hint: "Enter your password",
-                            isPassword: true,
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final email = _emailController.text.trim();
-                                if (email.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter your email!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_passwordController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Please enter your password!",
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                _showSuccessModal(email, true);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDB0011),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    // --- REGISTER TAB ---
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTextField(
-                            controller: _nameController,
-                            label: "Full Name",
-                            hint: "Enter your full name",
-                          ),
-                          _buildTextField(
-                            controller: _emailController,
-                            label: "Email",
-                            hint: "Enter your email",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          _buildTextField(
-                            controller: _phoneController,
-                            label: "Phone Number",
-                            hint: "Enter your phone number",
-                            keyboardType: TextInputType.phone,
-                          ),
-                          _buildTextField(
-                            controller: _passwordController,
-                            label: "Password",
-                            hint: "Create a password",
-                            isPassword: true,
-                          ),
-                          _buildTextField(
-                            controller: _confirmPasswordController,
-                            label: "Confirm Password",
-                            hint: "Re-enter your password",
-                            isConfirm: true,
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final name = _nameController.text.trim();
-                                if (name.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter your name!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_emailController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter your email!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_phoneController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Please enter your phone number!",
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_passwordController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter a password!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_passwordController.text.trim() !=
-                                    _confirmPasswordController.text.trim()) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Passwords do not match!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                _showSuccessModal(name, false);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDB0011),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text(
-                                "Create Account",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
-                    ),
-                  ],
+              _buildToggle(),
+
+              const SizedBox(height: 32),
+
+              Expanded(
+                child: SingleChildScrollView(
+                  child: _isLogin ? _buildLoginForm() : _buildRegisterForm(),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoginForm() {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _emailController,
+          label: "Email",
+          hint: "Enter your email",
+          keyboardType: TextInputType.emailAddress,
+        ),
+        _buildTextField(
+          controller: _passwordController,
+          label: "Password",
+          hint: "Enter your password",
+          isPassword: true,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              final email = _emailController.text.trim();
+              if (email.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your email!")),
+                );
+                return;
+              }
+              if (_passwordController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your password!")),
+                );
+                return;
+              }
+              _showSuccessModal(email, true);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDB0011),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text(
+              "Login",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterForm() {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _nameController,
+          label: "Full Name",
+          hint: "Enter your full name",
+        ),
+        _buildTextField(
+          controller: _emailController,
+          label: "Email",
+          hint: "Enter your email",
+          keyboardType: TextInputType.emailAddress,
+        ),
+        _buildTextField(
+          controller: _phoneController,
+          label: "Phone Number",
+          hint: "Enter your phone number",
+          keyboardType: TextInputType.phone,
+        ),
+        _buildTextField(
+          controller: _passwordController,
+          label: "Password",
+          hint: "Create a password",
+          isPassword: true,
+        ),
+        _buildTextField(
+          controller: _confirmPasswordController,
+          label: "Confirm Password",
+          hint: "Re-enter your password",
+          isConfirm: true,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              final name = _nameController.text.trim();
+              if (name.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your name!")),
+                );
+                return;
+              }
+              if (_emailController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your email!")),
+                );
+                return;
+              }
+              if (_phoneController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Please enter your phone number!"),
+                  ),
+                );
+                return;
+              }
+              if (_passwordController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter a password!")),
+                );
+                return;
+              }
+              if (_passwordController.text.trim() !=
+                  _confirmPasswordController.text.trim()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Passwords do not match!")),
+                );
+                return;
+              }
+              _showSuccessModal(name, false);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDB0011),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text(
+              "Create Account",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }

@@ -7,23 +7,15 @@ class YouthAuthScreen extends StatefulWidget {
   State<YouthAuthScreen> createState() => _YouthAuthScreenState();
 }
 
-class _YouthAuthScreenState extends State<YouthAuthScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _YouthAuthScreenState extends State<YouthAuthScreen> {
+  bool _isLogin = true; // ← replaced TabController with simple bool
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   bool _obscurePassword = true;
 
   @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
   void dispose() {
-    _tabController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _usernameController.dispose();
@@ -56,7 +48,7 @@ class _YouthAuthScreenState extends State<YouthAuthScreen>
               Text(
                 isLogin
                     ? "Good to see you again,\n$name!"
-                    : "Account created,\n$name! Let's start your money adventure!",
+                    : "Account created,\n$name!\nLet's start your money adventure!",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 14,
@@ -80,7 +72,7 @@ class _YouthAuthScreenState extends State<YouthAuthScreen>
                     ),
                   ),
                   child: const Text(
-                    "Continue",
+                    "Start Using the App",
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
@@ -175,176 +167,194 @@ class _YouthAuthScreenState extends State<YouthAuthScreen>
                 style: TextStyle(fontSize: 14, color: Colors.grey),
               ),
               const SizedBox(height: 24),
+
+              // ✅ Clean Toggle
               Container(
+                height: 48,
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: TabBar(
-                  controller: _tabController,
-                  indicator: BoxDecoration(
-                    color: const Color(0xFFDB0011),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "Login"),
-                    Tab(text: "Register"),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _isLogin = true),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: _isLogin
+                                ? const Color(0xFFDB0011)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              color: _isLogin ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => setState(() => _isLogin = false),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: !_isLogin
+                                ? const Color(0xFFDB0011)
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Register",
+                            style: TextStyle(
+                              color: !_isLogin ? Colors.white : Colors.grey,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    // --- LOGIN TAB ---
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTextField(
-                            controller: _emailController,
-                            label: "Email",
-                            hint: "Enter your email",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          _buildTextField(
-                            controller: _passwordController,
-                            label: "Password",
-                            hint: "Enter your password",
-                            isPassword: true,
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final email = _emailController.text.trim();
-                                if (email.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter your email!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_passwordController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        "Please enter your password!",
-                                      ),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                _showSuccessModal(email, true);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDB0011),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text(
-                                "Login",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
 
-                    // --- REGISTER TAB ---
-                    SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _buildTextField(
-                            controller: _usernameController,
-                            label: "Username",
-                            hint: "Choose a username",
-                          ),
-                          _buildTextField(
-                            controller: _emailController,
-                            label: "Email",
-                            hint: "Enter your email",
-                            keyboardType: TextInputType.emailAddress,
-                          ),
-                          _buildTextField(
-                            controller: _passwordController,
-                            label: "Password",
-                            hint: "Create a password",
-                            isPassword: true,
-                          ),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                final username = _usernameController.text
-                                    .trim();
-                                if (username.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter a username!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_emailController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter your email!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                if (_passwordController.text.trim().isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Please enter a password!"),
-                                    ),
-                                  );
-                                  return;
-                                }
-                                _showSuccessModal(username, false);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFDB0011),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              child: const Text(
-                                "Create Account",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
-                      ),
-                    ),
-                  ],
+              const SizedBox(height: 32),
+
+              // ✅ Show login or register based on toggle
+              Expanded(
+                child: SingleChildScrollView(
+                  child: _isLogin ? _buildLoginForm() : _buildRegisterForm(),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLoginForm() {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _emailController,
+          label: "Email",
+          hint: "Enter your email",
+          keyboardType: TextInputType.emailAddress,
+        ),
+        _buildTextField(
+          controller: _passwordController,
+          label: "Password",
+          hint: "Enter your password",
+          isPassword: true,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              final email = _emailController.text.trim();
+              if (email.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your email!")),
+                );
+                return;
+              }
+              if (_passwordController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your password!")),
+                );
+                return;
+              }
+              _showSuccessModal(email, true);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDB0011),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text(
+              "Login",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterForm() {
+    return Column(
+      children: [
+        _buildTextField(
+          controller: _usernameController,
+          label: "Username",
+          hint: "Choose a username",
+        ),
+        _buildTextField(
+          controller: _emailController,
+          label: "Email",
+          hint: "Enter your email",
+          keyboardType: TextInputType.emailAddress,
+        ),
+        _buildTextField(
+          controller: _passwordController,
+          label: "Password",
+          hint: "Create a password",
+          isPassword: true,
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              final username = _usernameController.text.trim();
+              if (username.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter a username!")),
+                );
+                return;
+              }
+              if (_emailController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter your email!")),
+                );
+                return;
+              }
+              if (_passwordController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Please enter a password!")),
+                );
+                return;
+              }
+              _showSuccessModal(username, false);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDB0011),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+            ),
+            child: const Text(
+              "Create Account",
+              style: TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }
