@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hsbc/pages/youth_home_screen.dart';
 
 class YouthAuthScreen extends StatefulWidget {
   const YouthAuthScreen({super.key});
@@ -61,8 +62,13 @@ class _YouthAuthScreenState extends State<YouthAuthScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    // TODO: navigate to youth home screen
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => YouthHomeScreen(name: name),
+                      ),
+                      (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFDB0011),

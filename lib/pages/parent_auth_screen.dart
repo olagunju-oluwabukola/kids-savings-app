@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hsbc/pages/parent_home_screen.dart';
 
 class ParentAuthScreen extends StatefulWidget {
   const ParentAuthScreen({super.key});
@@ -66,8 +67,13 @@ class _ParentAuthScreenState extends State<ParentAuthScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
-                    // TODO: navigate to parent home screen
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ParentHomeScreen(name: name),
+                      ),
+                      (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFDB0011),
