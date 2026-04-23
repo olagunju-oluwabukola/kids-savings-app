@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/saving_plan_provider.dart';
+import '../models/saving_plan.dart';
 
 class CreateSavingPlanModal extends StatelessWidget {
-  final TextEditingController planNameController;
+  final TextEditingController nameController;
   final TextEditingController amountController;
   final TextEditingController noteController;
 
   const CreateSavingPlanModal({
     super.key,
-    required this.planNameController,
+    required this.nameController,
     required this.amountController,
     required this.noteController,
   });
@@ -34,9 +37,9 @@ class CreateSavingPlanModal extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             TextField(
-              controller: planNameController,
+              controller: nameController,
               decoration: InputDecoration(
-                hintText: "e.g. Buying a bike",
+                hintText: "e.g., Buying a bike",
                 filled: true,
                 fillColor: const Color(0xFFF5F5F5),
                 border: OutlineInputBorder(
@@ -47,7 +50,7 @@ class CreateSavingPlanModal extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Amount of money need to save",
+              "Amount needed",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 8),
@@ -66,7 +69,7 @@ class CreateSavingPlanModal extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             const Text(
-              "Note",
+              "Note (optional)",
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
             ),
             const SizedBox(height: 8),
@@ -88,7 +91,7 @@ class CreateSavingPlanModal extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => _savePlan(context),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFDB0011),
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -97,7 +100,7 @@ class CreateSavingPlanModal extends StatelessWidget {
                       ),
                     ),
                     child: const Text(
-                      "Finish",
+                      "Create Plan",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -124,6 +127,50 @@ class CreateSavingPlanModal extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _savePlan(BuildContext context) {
+    final name = nameController.text.trim();
+    final amountText = amountController.text.trim();
+    final note = noteController.text.trim();
+
+    if (name.isEmpty) {
+      _showError(context, "Please enter a plan name");
+      return;
+    }
+
+    if (amountText.isEmpty || amountText == "0") {
+      _showError(context, "Please enter a valid amount");
+      return;
+    }
+
+    final amount = double.tryParse(amountText);
+    if (amount == null || amount <= 0) {
+      _showError(context, "Please enter a valid amount greater than 0");
+      return;
+    }
+
+    final plan = SavingPlan(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: name,
+      amount: amount,
+      note: note.isEmpty ? "No note" : note,
+      savedAmount: 0,
+      createdAt: DateTime.now(),
+    );
+
+    Provider.of<SavingPlanProvider>(context, listen: false).addPlan(plan);
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Saving plan created!")));
+  }
+
+  void _showError(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 }

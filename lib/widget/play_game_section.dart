@@ -15,20 +15,21 @@ class PlayGameSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 180,
+          height: 170,
           child: ListView(
             scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
             children: const [
               GameCard(
                 imagePath: "assets/images/game1.png",
                 title: "Crash Flow",
-                reward: "\$0.5 gift card",
+                reward: "\$0.5",
               ),
               SizedBox(width: 12),
               GameCard(
                 imagePath: "assets/images/game1.png",
                 title: "Acquire",
-                reward: "\$0.5 gift card",
+                reward: "\$0.5",
               ),
             ],
           ),

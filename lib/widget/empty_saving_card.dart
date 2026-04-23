@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class AddSavingCard extends StatelessWidget {
-  final VoidCallback? onTap;
+class EmptySavingCard extends StatelessWidget {
+  final VoidCallback onTap;
 
-  const AddSavingCard({super.key, this.onTap});
+  const EmptySavingCard({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,9 @@ class AddSavingCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text(
-              "Add saving plan",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              "Add your first\nsaving plan",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11, color: Colors.grey),
             ),
           ],
         ),

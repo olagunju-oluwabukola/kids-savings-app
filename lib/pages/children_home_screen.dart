@@ -1,11 +1,12 @@
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'package:flutter/material.dart';
-import 'package:hsbc/widget/create_saving_plan_modal.dart';
 import '../widget/top_bar.dart';
 import '../widget/balance_card.dart';
 import '../widget/quick_actions.dart';
 import '../widget/spending_section.dart';
-import '../widget/saving_plan.dart';
-import '../widget/play_game.dart';
+import '../widget/saving_plan_section.dart'; // Changed from saving_plan.dart
+import '../widget/play_game_section.dart';
 import '../widget/learn_section.dart';
 import '../widget/bottom_nav.dart';
 
@@ -41,7 +42,7 @@ class _ChildrenHomeScreenState extends State<ChildrenHomeScreen> {
                     const SizedBox(height: 16),
                     const SpendingSection(),
                     const SizedBox(height: 16),
-                    const SavingPlanSection(),
+                    const SavingPlanSection(), // No const error now
                     const SizedBox(height: 16),
                     const PlayGameSection(),
                     const SizedBox(height: 16),
@@ -61,22 +62,7 @@ class _ChildrenHomeScreenState extends State<ChildrenHomeScreen> {
             _currentNavIndex = index;
           });
         },
-        onAddPressed: () => _showCreateSavingPlanModal(),
-      ),
-    );
-  }
-
-  void _showCreateSavingPlanModal() {
-    final _planNameController = TextEditingController();
-    final _amountController = TextEditingController(text: "0");
-    final _noteController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) => CreateSavingPlanModal(
-        planNameController: _planNameController,
-        amountController: _amountController,
-        noteController: _noteController,
+        onAddPressed: () {}, // Empty for now, handled by SavingPlanSection
       ),
     );
   }
